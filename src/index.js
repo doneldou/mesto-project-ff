@@ -1,7 +1,9 @@
 import { openModal, closeModal } from "./components/modal.js";
-import { createCard, toggleLike } from "./components/card.js";
+import { createCard, removeCard, toggleLike } from "./components/card.js";
 import initialCards from "./scripts/cards.js";
+import "./pages/index.css";
 
+// DOM элементы
 const elements = {
   editButton: document.querySelector(".profile__edit-button"),
   addButton: document.querySelector(".profile__add-button"),
@@ -17,29 +19,25 @@ const elements = {
   jobInput: document.querySelector(".popup__input_type_description"),
   cardNameInput: document.querySelector(".popup__input_type_card-name"),
   cardLinkInput: document.querySelector(".popup__input_type_url"),
+  popupImage: document.querySelector(".popup_type_image .popup__image"),
+  popupCaption: document.querySelector(".popup_type_image .popup__caption"),
 };
 
+// Обработчики карточек
 const cardHandlers = {
-  handleDelete: (evt) => {
-    evt.target.closest(".card").remove();
-  },
-  handleLike: (evt) => {
-    toggleLike(evt.target);
-  },
+  handleDelete: removeCard,
+  handleLike: toggleLike,
   handleImageClick: (cardData) => {
-    const { imageModal } = elements;
-    imageModal.querySelector(".popup__image").src = cardData.link;
-    imageModal.querySelector(".popup__caption").textContent = cardData.name;
-    openModal(imageModal);
+    elements.popupImage.src = cardData.link;
+    elements.popupImage.alt = `Увеличенное изображение: ${cardData.name}`;
+    elements.popupCaption.textContent = cardData.name;
+    openModal(elements.imageModal);
   },
 };
 
+// Функции работы с карточками
 function renderCard(cardData) {
-  const card = createCard(cardData, {
-    handleDelete: cardHandlers.handleDelete,
-    handleLike: cardHandlers.handleLike,
-    handleImageClick: () => cardHandlers.handleImageClick(cardData),
-  });
+  const card = createCard(cardData, cardHandlers);
   elements.cardsList.prepend(card);
 }
 
@@ -47,6 +45,7 @@ function initializeCards() {
   initialCards.forEach(renderCard);
 }
 
+// Работа с формами
 function handleEditSubmit(evt) {
   evt.preventDefault();
   elements.profileName.textContent = elements.nameInput.value;
@@ -62,11 +61,12 @@ function handleAddSubmit(evt) {
     link: elements.cardLinkInput.value.trim(),
   });
 
-  elements.addForm.reset();
   closeModal(elements.addModal);
 }
 
+// Инициализация
 function setupEventListeners() {
+  // Кнопки открытия попапов
   elements.editButton.addEventListener("click", () => {
     elements.nameInput.value = elements.profileName.textContent;
     elements.jobInput.value = elements.profileDesc.textContent;
@@ -78,16 +78,17 @@ function setupEventListeners() {
     openModal(elements.addModal);
   });
 
+  // Обработчики форм
   elements.editForm.addEventListener("submit", handleEditSubmit);
   elements.addForm.addEventListener("submit", handleAddSubmit);
 
+  // Закрытие попапов
   document.querySelectorAll(".popup__close").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      closeModal(btn.closest(".popup"));
-    });
+    btn.addEventListener("click", () => closeModal(btn.closest(".popup")));
   });
 }
 
+// Запуск приложения
 function init() {
   setupEventListeners();
   initializeCards();
