@@ -1,0 +1,9 @@
+.popup__input-error {
+  color: rgba(255, 0, 0, 1);
+  font-size: 12px;
+  display: none;
+}
+
+.popup__input-error_active {
+  display: inline;
+}
