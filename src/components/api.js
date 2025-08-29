@@ -17,14 +17,9 @@ export const getUserInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
   })
-    .then((res) => {
-      return res.json(); // если всё хорошо, получили ответ
-    })
+    .then(checkResponse)
     .then((data) => {
       return data;
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };
 
@@ -32,14 +27,9 @@ export const getIninitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
   })
-    .then((res) => {
-      return res.json();
-    })
+    .then(checkResponse)
     .then((data) => {
       return data;
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };
 
@@ -51,11 +41,7 @@ export const updateUserProfile = (name, about) => {
       name: name,
       about: about,
     }),
-  })
-    .then(checkResponse)
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then(checkResponse);
 };
 
 export const addNewCard = (name, link) => {

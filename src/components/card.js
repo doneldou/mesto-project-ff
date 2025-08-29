@@ -1,5 +1,5 @@
 import { userId } from "../index.js";
-import { deleteCard, unlikeCard, likeCard } from "./api.js";
+import { unlikeCard, likeCard } from "./api.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -29,22 +29,29 @@ function createCard(cardData, handlers) {
   }
   // Обработчики событий
   deleteButton.addEventListener("click", () => {
-    deleteCard(cardData._id);
-    handlers.handleDelete(cardElement);
+    handlers.handleDeleteCard(cardElement, cardData._id);
   });
 
   likeButton.addEventListener("click", () => {
     if (likeButton.classList.contains("card__like-button_is-active")) {
-      unlikeCard(cardData._id).then((res) => {
-        likeCount.textContent = res.likes.length;
-      });
+      unlikeCard(cardData._id)
+        .then((res) => {
+          likeCount.textContent = res.likes.length;
+          handlers.handleLike(likeButton);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
-      likeCard(cardData._id).then((res) => {
-        likeCount.textContent = res.likes.length;
-      });
+      likeCard(cardData._id)
+        .then((res) => {
+          likeCount.textContent = res.likes.length;
+          handlers.handleLike(likeButton);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-
-    handlers.handleLike(likeButton);
   });
 
   cardImage.addEventListener("click", () =>
